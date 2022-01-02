@@ -82,10 +82,10 @@ for lan in e:
        temp = int(json_data['main']['temp']-273.15)
        if condition == 'Clear':
               c='certificate'
-              folium.Marker(location=[lan,e[lan]],icon=folium.Icon(color='blue',icon=c),popup=str(temp)+'°C').add_to(m1)
+              folium.Marker(location=[lan,e[lan]],icon=folium.Icon(color='orange',icon=c),popup=str(temp)+'°C').add_to(m1)
        elif condition == 'Clouds':
               c='cloud'
-              folium.Marker(location=[lan,e[lan]],icon=folium.Icon(color='blue',icon=c),popup=str(temp)+'°C').add_to(m1)
+              folium.Marker(location=[lan,e[lan]],icon=folium.Icon(color='lightgray',icon=c),popup=str(temp)+'°C').add_to(m1)
        elif condition == 'Rain':
               
               c='tint'
