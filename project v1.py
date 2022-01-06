@@ -1,5 +1,7 @@
 import folium
 import requests
+import time 
+from folium import IFrame
 e={38.4624412:23.5947651,
 37.9839412:23.7283052,
 39.6639818:20.8522784,
@@ -78,21 +80,51 @@ for lan in e:
        url="https://api.openweathermap.org/data/2.5/weather?lat="+str(lan)+"&lon="+str(e[lan])+"&appid=06c921750b9a82d8f5d1294e1586276f"
        json_data = requests.get(url).json()
        condition = json_data['weather'][0]['main']
-       
        temp = int(json_data['main']['temp']-273.15)
+       min_temp = int(json_data['main']['temp_min'] - 273.15)
+       max_temp = int(json_data['main']['temp_max'] - 273.15)
+       pressure = json_data['main']['pressure']
+       humidity = json_data['main']['humidity']
+       wind = json_data['wind']['speed']
+       sunrise = time.strftime('%I:%M:%S', time.gmtime(json_data['sys']['sunrise'] - 21600))
+       sunset = time.strftime('%I:%M:%S', time.gmtime(json_data['sys']['sunset'] - 21600))
+       f = open('weather.html','w')
+
+       message = """<html>
+       <head></head>
+       <body><p>""""condition:"+condition  +  """</p></body>
+       <body><p>""""temperature:"+ str(temp) + "°C" """</p></body>
+       <body><p>""""Min Temp: " + str(min_temp) + "°C" """</p></body>
+       <body><p>"""" Max Temp:" + str(max_temp) + "°C" """</p></body>
+       <body><p>""""Pressure: " + str(pressure) +"Pa" """</p></body>
+       <body><p>""""Humidity: " + str(humidity)+"g/kg" """</p></body>
+       <body><p>""""Wind Speed: " + str(wind) +"m/s" """</p></body>
+       <body><p>""""Sunrise: " + sunrise + """</p></body>
+       <body><p>""""Sunset: " + sunset+ """</p></body>
+         </html>"""
+
+       f.write(message)
+       f.close()
+       l=open('weather.html','r')
+       b=l.read()
+       l.close()
+       iframe=IFrame(b, width=200, height=320)
        if condition == 'Clear':
               c='certificate'
-              folium.Marker(location=[lan,e[lan]],icon=folium.Icon(color='orange',icon=c),popup=str(temp)+'°C').add_to(m1)
+              folium.Marker(location=[lan,e[lan]],icon=folium.Icon(color='orange',icon=c),
+                            popup=folium.Popup(iframe,max_width=450)).add_to(m1)
        elif condition == 'Clouds':
               c='cloud'
-              folium.Marker(location=[lan,e[lan]],icon=folium.Icon(color='lightgray',icon=c),popup=str(temp)+'°C').add_to(m1)
+              folium.Marker(location=[lan,e[lan]],icon=folium.Icon(color='lightgray',icon=c),
+                            popup=folium.Popup(iframe,max_width=450)).add_to(m1)
        elif condition == 'Rain':
               
               c='tint'
               
        
-              folium.Marker(location=[lan,e[lan]],icon=folium.Icon(color='blue',icon=c),popup=str(temp)+'°C').add_to(m1)
-m1.save('test.html')
+              folium.Marker(location=[lan,e[lan]],icon=folium.Icon(color='blue',icon=c),
+                            popup=folium.Popup(iframe,max_width=450)).add_to(m1)
+m1.save('myweather app.html')
        
         
     
