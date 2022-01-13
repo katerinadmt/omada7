@@ -85,8 +85,8 @@ for lan in e:
        pressure = json_data['main']['pressure']
        humidity = json_data['main']['humidity']
        wind = json_data['wind']['speed']
-       sunrise = time.strftime('%I:%M:%S', time.gmtime(json_data['sys']['sunrise'] - 21600))
-       sunset = time.strftime('%I:%M:%S', time.gmtime(json_data['sys']['sunset'] - 21600))
+       sunrise = time.strftime('%I:%M:%S', time.gmtime(json_data['sys']['sunrise'] + 7200))
+       sunset = time.strftime('%I:%M:%S', time.gmtime(json_data['sys']['sunset'] + 7200))
        f = open('weather.html','w')
 
        message = """<html>
@@ -98,8 +98,8 @@ for lan in e:
        <body><p>""""Pressure: " + str(pressure) +"Pa" """</p></body>
        <body><p>""""Humidity: " + str(humidity)+"g/kg" """</p></body>
        <body><p>""""Wind Speed: " + str(wind) +"m/s" """</p></body>
-       <body><p>""""Sunrise: " + sunrise + """</p></body>
-       <body><p>""""Sunset: " + sunset+ """</p></body>
+       <body><p>""""Sunrise: " + sunrise + "am" """</p></body>
+       <body><p>""""Sunset: " + sunset+"pm" """</p></body>
          </html>"""
 
        f.write(message)
