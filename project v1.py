@@ -2,6 +2,7 @@ import folium
 import requests
 import time 
 from folium import IFrame
+#Δημιουργία λεξικού συντεταγμένων για αντιστοίχιση γεωγραφικού μήκους και πλάτους
 e={38.4624412:23.5947651,
 37.9839412:23.7283052,
 39.6639818:20.8522784,
@@ -71,13 +72,15 @@ e={38.4624412:23.5947651,
  37.3123:23.4366,
  36.6618:25.1257,
   }  
-
+#Δημουργία του αρχικού χάρτη της Ελλάδας
 m1=folium.Map(location=[39.6383092,22.4160706],zoom_start=7)
 
-
+#Δομή επανάληψης για τη λήψη δεδομένων καιρού κάθε περιοχής
 for lan in e:
        url="https://api.openweathermap.org/data/2.5/weather?lat="+str(lan)+"&lon="+str(e[lan])+"&appid=06c921750b9a82d8f5d1294e1586276f"
+       #Λήψη και μετατροπή δεδομένων σε Python
        json_data = requests.get(url).json()
+       #Ορισμός μεταβλητών για τα δεδομένα
        condition = json_data['weather'][0]['main']
        temp = int(json_data['main']['temp']-273.15)
        min_temp = int(json_data['main']['temp_min'] - 273.15)
@@ -87,12 +90,13 @@ for lan in e:
        wind = json_data['wind']['speed']
        sunrise = time.strftime('%I:%M:%S', time.gmtime(json_data['sys']['sunrise'] + 7200))
        sunset = time.strftime('%I:%M:%S', time.gmtime(json_data['sys']['sunset'] + 7200))
+       
+       #Δημιουργία html αρχείου με χρήση των μεταβλητών που ορίσαμε
        f = open('weather.html','w')
-
        message = """<html>
        <head></head>
-       <body><p>""""condition:"+condition  +  """</p></body>
-       <body><p>""""temperature:"+ str(temp) + "°C" """</p></body>
+       <body><p>""""Condition:"+condition  +  """</p></body>
+       <body><p>""""Temperature:"+ str(temp) + "°C" """</p></body>
        <body><p>""""Min Temp: " + str(min_temp) + "°C" """</p></body>
        <body><p>"""" Max Temp:" + str(max_temp) + "°C" """</p></body>
        <body><p>""""Pressure: " + str(pressure) +"Pa" """</p></body>
@@ -104,10 +108,14 @@ for lan in e:
 
        f.write(message)
        f.close()
+       #Εντολή ανάγνωσης αρχείου html
        l=open('weather.html','r')
        b=l.read()
        l.close()
+       #Δημιουργία παραθύρου και εισαγωγή του html αρχείου σε αυτό
        iframe=IFrame(b, width=200, height=320)
+       
+       #Δημιουργία εικονιδίων πάνω στον χάρτη και σύνδεση αυτών με το παράθυρο
        if condition == 'Clear':
               c='certificate'
               folium.Marker(location=[lan,e[lan]],icon=folium.Icon(color='orange',icon=c),
@@ -119,10 +127,10 @@ for lan in e:
        elif condition == 'Rain':
               
               c='tint'
-              
-       
               folium.Marker(location=[lan,e[lan]],icon=folium.Icon(color='blue',icon=c),
                             popup=folium.Popup(iframe,max_width=450)).add_to(m1)
+        
+#Αποθήκευση του χάρτη σε html αρχείο
 m1.save('myweather app.html')
        
         
